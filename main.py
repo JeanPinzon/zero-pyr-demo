@@ -41,18 +41,20 @@ config = {
     }]
 }
 
-repo = PYRMongoRepo()
-cache = PYRRedisCache(os.environ["REDIS_CONNECTION_STRING"])
-service = PYRService(config, repo=repo, cache=cache)
+# repo = PYRMongoRepo()
+# cache = PYRRedisCache(os.environ["REDIS_CONNECTION_STRING"])
+# service = PYRService(config, repo=repo, cache=cache)
+
+service = PYRService(config)
 
 
 sanic_app = PYRSanicAppBuilder.build(config, service)
 
-@sanic_app.listener('before_server_start')
-def init(app, loop):
-    mongo_db_instance = AsyncIOMotorClient(os.environ["MONGO_CONNECTION_STRING"])
-    db = mongo_db_instance.get_default_database()
-    repo.set_db_connection(db)
+# @sanic_app.listener('before_server_start')
+# def init(app, loop):
+#     mongo_db_instance = AsyncIOMotorClient(os.environ["MONGO_CONNECTION_STRING"])
+#     db = mongo_db_instance.get_default_database()
+#     repo.set_db_connection(db)
 
 sanic_app.run(
     host='0.0.0.0',
