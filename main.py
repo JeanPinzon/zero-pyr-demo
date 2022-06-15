@@ -1,9 +1,9 @@
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
+from sanic_ext import Extend
 from py_easy_rest import PYRSanicAppBuilder
 from py_easy_rest.service import PYRService
-from py_easy_rest_mongo_motor_repo import PYRMongoRepo
-from py_easy_rest_redis_cache import PYRRedisCache
+from py_easy_rest.caches import PYRDummyCache
+from py_easy_rest.repos import PYRMemoryRepo
 
 
 config = {
@@ -41,18 +41,36 @@ config = {
     }]
 }
 
-repo = PYRMongoRepo()
-cache = PYRRedisCache(os.environ["REDIS_CONNECTION_STRING"])
-service = PYRService(config, repo=repo, cache=cache)
 
+class MyCustomService(PYRService):
+    def __init__(
+        self,
+        api_config,
+        repo=PYRMemoryRepo(),
+        cache=PYRDummyCache(),
+        cache_list_seconds_ttl=10,
+        cache_get_seconds_ttl=60 * 30,  # thirty minutes
+    ):
+        super().__init__(config, repo=repo, cache=cache)
+
+    async def get(self, slug, id):
+        # do some custom stuff
+        data = await super().get(slug, id)
+
+        data["custom_field"] = "custom_value"
+
+        return data
+
+
+service = MyCustomService(config)
 
 sanic_app = PYRSanicAppBuilder.build(config, service)
 
-@sanic_app.listener('before_server_start')
-def init(app, loop):
-    mongo_db_instance = AsyncIOMotorClient(os.environ["MONGO_CONNECTION_STRING"])
-    db = mongo_db_instance.get_default_database()
-    repo.set_db_connection(db)
+sanic_app.config.update({
+    "CORS_ORIGINS": "*"
+})
+
+Extend(sanic_app)
 
 sanic_app.run(
     host='0.0.0.0',

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pyr-zero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pyr-zero
+  template:
+    spec:
+      containers:
+        - name: pyr-zero
+          image: fake-image
+          resources:
+            requests:
+              memory: 4Mi
+              cpu: 0.1
+            limits:
+              memory: 8Mi
+              cpu: 0.4
+          envFrom:
+          - configMapRef:
+              name: pyr-zero-config
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: pyr-zero
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: pyr-zero
+  maxReplicas: 2
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 60
