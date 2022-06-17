@@ -45,6 +45,7 @@ jobs:
     env:
       environment-overlay: staging
       cluster-name: "py-easy-rest-zero-test"
+      cluster-authentication-role-arn: "arn:aws:iam::884850292696:role/eks-admin"
     steps:
       - uses: actions/checkout@v2
       - name: Set IMAGE_TAG as env
@@ -63,6 +64,7 @@ jobs:
         uses: ./.github/actions/setup-aws-kustomize
         with:
           cluster-name: ${{ env.cluster-name }}
+          cluster-authentication-role-arn: ${{ env.cluster-authentication-role-arn }}
           region: ${{ env.region }}
       - name: Check Namespace
         run: |
