@@ -1,4 +1,3 @@
-py-easy-rest==0.4.5
+py-easy-rest==0.4.7
 py-easy-rest-mongo-motor-repo==0.1.5
-
 py-easy-rest-redis-cache==0.1.3

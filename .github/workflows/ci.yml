@@ -2,12 +2,12 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [master, main, ci]
+    branches: [master, main]
 env:
   region: us-east-1
   accountId: "884850292696"
-  repo: py-easy-rest-zero-test
-  namespace: py-easy-rest-zero-test-namespace
+  repo: pyr-zero
+  namespace: pyr-zero-namespace
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,8 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       environment-overlay: staging
-      cluster-name: "py-easy-rest-zero-test"
-      cluster-authentication-role-arn: "arn:aws:iam::884850292696:role/eks-admin"
+      cluster-name: "pyr-zero"
     steps:
       - uses: actions/checkout@v2
       - name: Set IMAGE_TAG as env
@@ -64,7 +63,6 @@ jobs:
         uses: ./.github/actions/setup-aws-kustomize
         with:
           cluster-name: ${{ env.cluster-name }}
-          cluster-authentication-role-arn: ${{ env.cluster-authentication-role-arn }}
           region: ${{ env.region }}
       - name: Check Namespace
         run: |

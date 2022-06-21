@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: py-easy-rest-zero-test
+  name: pyr-zero
 spec:
   template:
     spec:
       containers:
-        - name: py-easy-rest-zero-test
+        - name: pyr-zero
           resources:
             requests:
               memory: 64Mi
@@ -18,7 +18,7 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: py-easy-rest-zero-test
+  name: pyr-zero
 spec:
   maxReplicas: 3
   minReplicas: 1

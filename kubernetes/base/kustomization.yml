@@ -3,13 +3,14 @@ kind: Kustomization
 
 resources:
 - deployment.yml
-- service.yml
+- private-lb.yml
+- public-lb.yml
 
 
 configMapGenerator:
-- name: py-easy-rest-zero-test-config
+- name: pyr-zero-config
   literals: []
 
 
 commonLabels:
-  app: py-easy-rest-zero-test
+  app: pyr-zero
